@@ -25,27 +25,8 @@ enum Operation {
     Exit,
 }
 
-impl Database {
-    pub fn new() -> Self {
-        Database {
-            map: HashMap::new(),
-        }
-    }
-    pub fn set(&mut self, key: String, val: String) -> String {
-        match self.map.insert(key, val) {
-            Some(v) => v.to_string(),
-            None => format!("New Key Added"),
-        }
-    }
-
-    pub fn get(&mut self, key: String) -> String {
-        match self.map.get(&key) {
-            Some(v) => v.to_string(),
-            None => format!("No Value found for {}", key),
-        }
-    }
-
-    pub fn parse(&self, line: &String) -> Result<Query, String> {
+impl Query {
+    pub fn new(line: &String) -> Result<Query, String> {
         let line = line.trim().to_string();
         let tokens: Vec<&str> = line.split(" ").collect();
         if tokens[0] != "store" {
@@ -68,11 +49,33 @@ impl Database {
         Ok(Query { operation, args })
     }
 
-    pub fn exec(&mut self, query: &Query) -> Option<String> {
-        match &query.args {
-            OpArgs::Pair((k, v)) => Some(self.set(k.to_string(), v.to_string())),
-            OpArgs::Single(k) => Some(self.get(k.to_string())),
+    pub fn exec(&self, db: &mut Database) -> Option<String> {
+        match &self.args {
+            OpArgs::Pair((k, v)) => Some(db.set(k.to_string(), v.to_string())),
+            OpArgs::Single(k) => Some(db.get(k.to_string())),
             OpArgs::None => std::process::exit(0),
+        }
+    }
+}
+
+impl Database {
+    pub fn new() -> Self {
+        Database {
+            map: HashMap::new(),
+        }
+    }
+
+    pub fn set(&mut self, key: String, val: String) -> String {
+        match self.map.insert(key, val) {
+            Some(v) => v.to_string(),
+            None => format!("New Key Added"),
+        }
+    }
+
+    pub fn get(&mut self, key: String) -> String {
+        match self.map.get(&key) {
+            Some(v) => v.to_string(),
+            None => format!("No Value found for {}", key),
         }
     }
 }

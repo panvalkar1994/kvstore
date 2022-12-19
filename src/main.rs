@@ -1,4 +1,4 @@
-use kvstore::Database;
+use kvstore::{Database, Query};
 use std::io;
 
 fn main() -> ! {
@@ -7,8 +7,8 @@ fn main() -> ! {
     loop {
         let mut input=String::new();
         io::stdin().read_line(&mut input).expect("Bad Input");
-        let mut query = db.parse(&input).unwrap();
-        if let Some(v) = db.exec(&mut query) {
+        let query = Query::new(&input).unwrap();
+        if let Some(v) = query.exec(&mut db) {
             println!("Result>{}",v);
         } else {
             println!("------------");
