@@ -6,6 +6,7 @@ pub struct Database {
 
 #[derive(Debug)]
 pub struct Query {
+    #[allow(dead_code)] // operation field will be used...till then disabled lint
     operation: Operation,
     args: OpArgs,
 }
